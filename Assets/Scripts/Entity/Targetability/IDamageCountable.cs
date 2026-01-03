@@ -1,6 +1,6 @@
 namespace Scripts.Entity.Targetability
 {
-    public interface IHitCountable : IDamageable
+    public interface IDamageCountable : IDamageable
     {
         
     }

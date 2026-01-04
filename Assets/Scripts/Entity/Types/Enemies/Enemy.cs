@@ -32,9 +32,9 @@ namespace Scripts.Entity.Enemies
             throw new System.NotImplementedException();
         }
 
-        public void Move()
+        public void Move(Vector2 direction)
         {
-            throw new System.NotImplementedException();
+            MoveDirection = direction;
         }
 
         #endregion

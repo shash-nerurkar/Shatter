@@ -20,6 +20,7 @@ namespace Scripts.Entity.Behaviours.Movement
         /// <summary>
         /// Moves the entity.
         /// </summary>
-        public void Move();
+        /// <param name="direction">The direction to move in.</param>
+        public void Move(Vector2 direction);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using Scripts.Input;
 using Scripts.UI;
 using UnityEngine;
 
@@ -30,6 +31,10 @@ namespace Scripts
             DontDestroyOnLoad(gameObject);
             
             UIManagerObject.AddComponent<UIManager>();
+
+            GameObject newGameObject = new("Input Manager");
+            newGameObject.transform.SetParent(transform);
+            newGameObject.AddComponent<InputManager>();
         }
 
         private void Start()

@@ -3,6 +3,8 @@ using Scripts.Entity.Behaviours.Collection;
 using Scripts.Entity.Behaviours.Movement;
 using Scripts.Entity.Behaviours.Playability;
 using Scripts.Entity.Behaviours.Targetability;
+using Scripts.Gameplay.Commands;
+using Scripts.Gameplay.Commands.Board;
 
 namespace Scripts.Entity.Playables
 {
@@ -23,6 +25,30 @@ namespace Scripts.Entity.Playables
 
         
         #region Methods
+
+        private void Awake()
+        {
+            GameCommandBus.OnCommandPublished += OnGameCommandPublished;
+        }
+
+        private void OnDestroy()
+        {
+            GameCommandBus.OnCommandPublished -= OnGameCommandPublished;
+        }
+
+        public void OnGameCommandPublished(IGameCommand<IGameCommandContext> command, IGameCommandContext context)
+        {
+            switch (command, context)
+            {
+                case (MoveCommand moveCommand, MoveCommandContext moveContext):
+                    moveCommand.Execute(this, moveContext);
+                    break;
+
+                case (AimCommand aimCommand, AimCommandContext aimContext):
+                    aimCommand.Execute(this, aimContext);
+                    break;
+            }
+        }
 
         public void Collect()
         {

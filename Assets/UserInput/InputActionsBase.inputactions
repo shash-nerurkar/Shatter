@@ -1,14 +1,7 @@
 {
     "version": 1,
     "name": "InputActionsBase",
-    "maps": [
-        {
-            "name": "Player",
-            "id": "fdafb8bc-06d8-4f8e-9d26-112a180ef712",
-            "actions": [],
-            "bindings": []
-        }
-    ],
+    "maps": [],
     "controlSchemes": [
         {
             "name": "Keyboard&Mouse",

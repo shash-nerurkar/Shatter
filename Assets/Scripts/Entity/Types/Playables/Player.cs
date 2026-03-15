@@ -1,7 +1,6 @@
 using UnityEngine;
 using Scripts.Entity.Behaviours.Collection;
 using Scripts.Entity.Behaviours.Movement;
-using Scripts.Entity.Behaviours.Playability;
 using Scripts.Entity.Behaviours.Targetability;
 using Scripts.Gameplay.Commands;
 using Scripts.Gameplay.Commands.Board;
@@ -11,19 +10,23 @@ namespace Scripts.Entity.Playables
     /// <summary>
     /// Represents the player entity in the game.
     /// </summary>
-    public class Player : MonoBehaviour, IDamageCountable, IMovable, ICollector, IPlayable
+    public class Player : MonoBehaviour, IMovable, IAimable, IDamageCountable, ICollector
     {
         #region Fields
+
+        public Vector3 CurrentPosition => transform.position;
+
+        public Vector2 MoveDirection { get; private set; }
+
+        public Vector2 AimDirection { get; private set; }
 
         public float Health { get; private set; }
 
         public float Speed { get; private set; }
 
-        public Vector2 MoveDirection { get; private set; }
-
         #endregion
 
-        
+
         #region Methods
 
         private void Awake()
@@ -36,17 +39,17 @@ namespace Scripts.Entity.Playables
             GameCommandBus.OnCommandPublished -= OnGameCommandPublished;
         }
 
-        public void OnGameCommandPublished(IGameCommand<IGameCommandContext> command, IGameCommandContext context)
+        public void OnGameCommandPublished(IGameCommandContext context)
         {
-            switch (command, context)
+            switch (context)
             {
-                case (MoveCommand moveCommand, MoveCommandContext moveContext):
-                    moveCommand.Execute(this, moveContext);
-                    break;
+                case MoveCommandContext moveContext:
+                    new MoveCommand().Execute(this, moveContext);
+                    return;
 
-                case (AimCommand aimCommand, AimCommandContext aimContext):
-                    aimCommand.Execute(this, aimContext);
-                    break;
+                case AimCommandContext aimContext:
+                    new AimCommand().Execute(this, aimContext);
+                    return;
             }
         }
 
@@ -68,6 +71,11 @@ namespace Scripts.Entity.Playables
         public void Move(Vector2 direction)
         {
             MoveDirection = direction;
+        }
+
+        public void Aim(Vector2 direction)
+        {
+            AimDirection = direction;
         }
 
         #endregion

@@ -11,11 +11,11 @@ namespace Scripts.Gameplay.Commands
         /// <summary>
         /// The event fired when a new command is published.
         /// </summary>
-        public static event Action<IGameCommand<IGameCommandContext>, IGameCommandContext> OnCommandPublished;
+        public static event Action<IGameCommandContext> OnCommandPublished;
 
         /// <summary>
         /// Publishes a new game command.
         /// </summary>
-        public static void Publish(IGameCommand<IGameCommandContext> command, IGameCommandContext context) => OnCommandPublished?.Invoke(command, context);
+        public static void Publish(IGameCommandContext context) => OnCommandPublished?.Invoke(context);
     }
 }

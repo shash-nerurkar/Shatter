@@ -4,21 +4,20 @@ using UnityEngine;
 namespace Scripts.Gameplay.Commands.Board
 {
     /// <summary>
-    /// A command to aim an entity's weapon.
+    /// A command to set an entity's aim.
     /// </summary>
     public class AimCommand : IGameCommand<IGameCommandContext>
     {
-        public AimCommand()
-        {
-            
-        }
+        private Vector3 aimAt;
 
         /// <summary>
         /// Executes the aim command with the given context.
         /// </summary>
-        public void Execute(IMovable movable, AimCommandContext context)
+        public void Execute(IAimable aimable, AimCommandContext context)
         {
-            
+            aimAt = context.IsScreenSpace ? Camera.main.ScreenToWorldPoint(context.AimAt) : context.AimAt;
+
+            aimable.Aim(aimAt - aimable.CurrentPosition);
         }
     }
 
@@ -28,13 +27,16 @@ namespace Scripts.Gameplay.Commands.Board
     public sealed class AimCommandContext : IGameCommandContext
     {
         /// <summary>
-        /// The direction to aim in.
+        /// The point to aim at in screen space.
         /// </summary>
-        public Vector2 Direction { get; }
+        public Vector2 AimAt { get; }
 
-        public AimCommandContext(Vector2 direction)
+        public bool IsScreenSpace { get;}
+
+        public AimCommandContext(Vector2 aimAt, bool isScreenSpace)
         {
-            Direction = direction;
+            AimAt = aimAt;
+            IsScreenSpace = isScreenSpace;
         }
     }
 }

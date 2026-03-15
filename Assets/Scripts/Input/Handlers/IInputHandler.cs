@@ -1,31 +1,36 @@
 namespace Scripts.Input.Handlers
 {
     /// <summary>
-    /// Manages user input for playable entities.
+    /// Handles user input for playable entities.
     /// </summary>
     public interface IInputHandler
     {
         #region Methods
 
         /// <summary>
-        /// Enables user input for the entity.
+        /// Sets up handled events.
         /// </summary>
-        public void EnableInput();
+        public void Init();
 
         /// <summary>
-        /// Disables user input for the entity.
+        /// Removes all handled events.
         /// </summary>
-        public void DisableInput();
+        public void Dispose();
 
         /// <summary>
-        /// Sets input events for the entity.
+        /// Handles events that need polling.
         /// </summary>
-        public void SetInputs();
+        public void Poll();
 
         /// <summary>
-        /// Polls for user inputs.
+        /// Enables handling of events.
         /// </summary>
-        public void PollInputs();
+        public void Enable();
+
+        /// <summary>
+        /// Disables handling of events.
+        /// </summary>
+        public void Disable();
 
         #endregion
     }

@@ -8,16 +8,16 @@ namespace Scripts.Gameplay.Commands.Board
     /// </summary>
     public class MoveCommand : IGameCommand<MoveCommandContext>
     {
-        private Vector3 moveTo;
+        private Vector3 moveDirection;
         
         /// <summary>
         /// Executes the move command with the given context.
         /// </summary>
         public void Execute(IMovable movable, MoveCommandContext context)
         {
-            moveTo = Camera.main.ScreenToWorldPoint(context.MoveTo);
+            moveDirection = Camera.main.ScreenToWorldPoint(context.MoveTo) - movable.CurrentPosition;
 
-            movable.Move(moveTo - movable.CurrentPosition);
+            movable.Move(moveDirection);
         }
     }
 

@@ -8,16 +8,16 @@ namespace Scripts.Gameplay.Commands.Board
     /// </summary>
     public class AimCommand : IGameCommand<IGameCommandContext>
     {
-        private Vector3 aimAt;
+        private Vector3 aimDirection;
 
         /// <summary>
         /// Executes the aim command with the given context.
         /// </summary>
         public void Execute(IAimable aimable, AimCommandContext context)
         {
-            aimAt = context.IsScreenSpace ? Camera.main.ScreenToWorldPoint(context.AimAt) : context.AimAt;
+            aimDirection = (context.IsScreenSpace ? Camera.main.ScreenToWorldPoint(context.AimAt) : context.AimAt) - aimable.CurrentPosition;
 
-            aimable.Aim(aimAt - aimable.CurrentPosition);
+            aimable.Aim(aimDirection);
         }
     }
 

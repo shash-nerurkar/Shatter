@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Scripts.UI
 {
+    /// <summary>
+    /// The central manager for the app's UI.
+    /// </summary>
     public class UIManager : MonoBehaviour
     {
         #region Actions
@@ -23,12 +26,9 @@ namespace Scripts.UI
         
         private void Awake()
         {
-            Game.Instance.ShowSplashScreen += ShowSplash;
+            LoadSplashScreen();
 
-            _splashScreen = Instantiate(
-                Resources.Load<SplashScreen>(Constants.FilePaths.SplashScreenPrefab),
-                transform
-            );
+            Game.Instance.ShowSplashScreen += ShowSplash;
         }
 
         private void OnDestroy()
@@ -38,6 +38,18 @@ namespace Scripts.UI
             Game.Instance.ShowSplashScreen -= ShowSplash;
         }
 
+        /// <summary>
+        /// Loads and instantiates the splash screen.
+        /// </summary>
+        private void LoadSplashScreen()
+        {
+            SplashScreen splashScreenPrefab = Resources.Load<SplashScreen>(Constants.FilePaths.SplashScreenPrefab);
+            if(splashScreenPrefab == null)
+                return;
+            
+            _splashScreen = Instantiate(splashScreenPrefab, transform);
+        }
+        
         private void ShowSplash() => ShowScreen(UIScreenType.Splash);
 
         private void ShowScreen(UIScreenType newScreenState)
@@ -45,6 +57,9 @@ namespace Scripts.UI
             switch(newScreenState)
             {
                 case UIScreenType.Splash:
+                    if(_splashScreen == null)
+                        return;
+
                     _splashScreen.Show(onHidden: () => ShowScreen(UIScreenType.GameBoard));
                     break;
                     

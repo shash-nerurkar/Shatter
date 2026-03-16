@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Scripts
 {
+    /// <summary>
+    /// The main class. Used from the very startup of the app.
+    /// </summary>
     public class Game : MonoBehaviour
     {
         #region Actions
@@ -27,6 +30,12 @@ namespace Scripts
 
         private void Awake()
         {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             Instance = this;
             DontDestroyOnLoad(gameObject);
             

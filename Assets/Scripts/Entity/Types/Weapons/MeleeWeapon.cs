@@ -21,12 +21,12 @@ namespace Scripts.Entity.Weapons
 
         public void Damage()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void Fire()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         #endregion

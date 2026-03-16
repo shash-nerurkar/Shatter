@@ -55,17 +55,17 @@ namespace Scripts.Entity.Playables
 
         public void Collect()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void GetDamaged()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void GetTargeted()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void Move(Vector2 direction)

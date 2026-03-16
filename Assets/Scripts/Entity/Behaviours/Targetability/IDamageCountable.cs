@@ -8,9 +8,6 @@ namespace Scripts.Entity.Behaviours.Targetability
         /// <summary>
         /// Called when the entity is damaged by an <see cref="IDamager"/>.
         /// </summary>
-        public new virtual void GetDamaged()
-        {
-            throw new System.NotImplementedException();
-        }
+        public new void GetDamaged();
     }
 }

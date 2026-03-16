@@ -42,6 +42,7 @@ namespace Scripts.Input.Handlers.Board
                 switch (touch.phase)
                 {
                     case UnityEngine.InputSystem.TouchPhase.Began:
+                        // TODO - this logic is placeholder, shall be replaced in the future
                         if(touch.startScreenPosition.y < Screen.height * 0.3f)
                             _moveTouchId = touch.touchId;
                         else
@@ -77,7 +78,7 @@ namespace Scripts.Input.Handlers.Board
                 GameCommandBus.Publish(new MoveCommandContext(touch.screenPosition));
             else if (touch.touchId == _aimTouchId)
                 GameCommandBus.Publish(new AimCommandContext(touch.screenPosition, isScreenSpace: true));
-}
+        }
 
         #endregion
     }

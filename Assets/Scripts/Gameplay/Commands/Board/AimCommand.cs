@@ -6,7 +6,7 @@ namespace Scripts.Gameplay.Commands.Board
     /// <summary>
     /// A command to set an entity's aim.
     /// </summary>
-    public class AimCommand : IGameCommand<IGameCommandContext>
+    public class AimCommand : IGameCommand<AimCommandContext>
     {
         private Vector3 aimDirection;
 

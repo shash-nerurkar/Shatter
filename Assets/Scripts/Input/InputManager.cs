@@ -37,8 +37,15 @@ namespace Scripts.Input
                 handler.Poll();
         }
 
+        /// <summary>
+        /// Initialises a new input handler for the given screen state, if one does not already exist.
+        /// </summary>
+        /// <param name="screenState">The screen state to initialise an input handler for.</param>
         public void InitHandler(UIScreenType screenState)
         {
+            if(TryGetHandler(screenState) != null)
+                return;
+
             IInputHandler newHandler = screenState switch
             {
                 UIScreenType.GameBoard => gameObject.AddComponent<BoardInputHandler>(),
@@ -53,22 +60,18 @@ namespace Scripts.Input
             inputHandlers.Add(newHandler);
         }
 
+        /// <summary>
+        /// Destroys the input handler associated with the given screen state.
+        /// </summary>
+        /// <param name="screenState">The screen state associated with the input handler to destroy.</param>
         public void DestroyHandler(UIScreenType screenState)
         {
-            Type inputHandlerType = screenState switch
-            {
-                UIScreenType.GameBoard => typeof(BoardInputHandler),
-                _ => null
-            };
-            if(inputHandlerType == null)
-                return;
-
-            IInputHandler handlerToDestroy = inputHandlers.FirstOrDefault(handler => handler.GetType() == inputHandlerType);
+            IInputHandler handlerToDestroy = TryGetHandler(screenState);
             if(handlerToDestroy == null)
                 return;
             
-            handlerToDestroy.Dispose();
             handlerToDestroy.Disable();
+            handlerToDestroy.Dispose();
 
             Destroy(screenState switch
             {
@@ -77,6 +80,24 @@ namespace Scripts.Input
             });
 
             inputHandlers.Remove(handlerToDestroy);
+        }
+
+        /// <summary>
+        /// Attempts to retrieve an input handler associated with the given screen state.
+        /// </summary>
+        /// <param name="screenState">The screen state to retrieve an input handler for.</param>
+        /// <returns>An input handler associated with the given screen state, if one exists; otherwise, null.</returns>
+        private IInputHandler TryGetHandler(UIScreenType screenState)
+        {
+            Type inputHandlerType = screenState switch
+            {
+                UIScreenType.GameBoard => typeof(BoardInputHandler),
+                _ => null
+            };
+            if(inputHandlerType == null)
+                return null;
+
+            return inputHandlers.FirstOrDefault(handler => handler.GetType() == inputHandlerType);
         }
 
         #endregion

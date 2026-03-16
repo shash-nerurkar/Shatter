@@ -8,6 +8,11 @@ namespace Scripts.Entity.Behaviours.Movement
     public interface IMovable
     {
         /// <summary>
+        /// The current position of the entity.
+        /// </summary>
+        public Vector3 CurrentPosition { get; }
+
+        /// <summary>
         /// The speed at which the entity moves.
         /// </summary>
         public float Speed { get; }

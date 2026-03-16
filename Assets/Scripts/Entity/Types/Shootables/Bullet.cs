@@ -10,6 +10,8 @@ namespace Scripts.Entity.Shootables
     public class Bullet : MonoBehaviour, IShootable, IDamageCountable
     {
         #region Fields
+        
+        public Vector3 CurrentPosition { get; private set; }
 
         public float BaseDamage { get; private set; }
 

@@ -7,15 +7,19 @@ namespace Scripts.Entity.Enemies
     /// <summary>
     /// Represents an enemy entity in the game.
     /// </summary>
-    public class Enemy : MonoBehaviour, IDamageCountable, IMovable
+    public class Enemy : MonoBehaviour, IMovable, IAimable, IDamageCountable
     {
         #region Fields
 
-        public float Health { get; private set; }
+        public Vector3 CurrentPosition { get; private set; }
 
         public float Speed { get; private set; }
 
         public Vector2 MoveDirection { get; private set; }
+
+        public Vector2 AimDirection { get; private set; }
+
+        public float Health { get; private set; }
 
         #endregion
 
@@ -35,6 +39,11 @@ namespace Scripts.Entity.Enemies
         public void Move(Vector2 direction)
         {
             MoveDirection = direction;
+        }
+
+        public void Aim(Vector2 direction)
+        {
+            AimDirection = direction;
         }
 
         #endregion

@@ -1,4 +1,5 @@
 using System;
+using Scripts.Input;
 using Scripts.UI;
 using UnityEngine;
 
@@ -38,12 +39,24 @@ namespace Scripts
             Instance = this;
             DontDestroyOnLoad(gameObject);
             
-            UIManagerObject.AddComponent<UIManager>();
+            LoadCentralManagers();
         }
 
         private void Start()
         {
             ShowSplashScreen?.Invoke();
+        }
+
+        /// <summary>
+        /// Loads all central managers for the app.
+        /// </summary>
+        private void LoadCentralManagers()
+        {
+            UIManagerObject.AddComponent<UIManager>();
+
+            GameObject newGameObject = new("Input Manager");
+            newGameObject.transform.SetParent(transform);
+            newGameObject.AddComponent<InputManager>();
         }
 
         #endregion Methods

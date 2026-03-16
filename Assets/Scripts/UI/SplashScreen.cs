@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Scripts.UI
@@ -7,6 +8,13 @@ namespace Scripts.UI
     /// </summary>
     public class SplashScreen : MonoBehaviour
     {
+        #region Actions
+
+        private Action _onHidden;
+
+        #endregion
+
+
         #region Fields
 
         [SerializeField] private float displayDuration = 3.0f;
@@ -19,12 +27,14 @@ namespace Scripts.UI
         /// <summary>
         /// Shows the splash screen, and hides it after the specified duration.
         /// </summary>
-        public void Show()
+        public void Show(Action onHidden = null)
         {
             gameObject.SetActive(true);
             
             CancelInvoke(nameof(Hide));
             Invoke(nameof(Hide), displayDuration);
+
+            _onHidden = onHidden;
         }
 
 
@@ -34,6 +44,10 @@ namespace Scripts.UI
         private void Hide()
         {
             gameObject.SetActive(false);
+
+            Action onHidden = _onHidden;
+            onHidden?.Invoke();
+            _onHidden = null;
         }
 
         #endregion Methods

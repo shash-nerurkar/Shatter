@@ -10,6 +10,8 @@ namespace Scripts.Entity.Shootables
     public class Ball : MonoBehaviour, IShootable, IHitCountable
     {
         #region Fields
+        
+        public Vector3 CurrentPosition { get; private set; }
 
         public float BaseDamage { get; private set; }
 

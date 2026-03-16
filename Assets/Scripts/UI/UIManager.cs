@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Scripts.UI
@@ -7,6 +8,13 @@ namespace Scripts.UI
     /// </summary>
     public class UIManager : MonoBehaviour
     {
+        #region Actions
+
+        public static event Action<UIScreenType> SetUIScreenInput;
+
+        #endregion
+
+
         #region Fields
 
         private SplashScreen _splashScreen;
@@ -25,6 +33,8 @@ namespace Scripts.UI
 
         private void OnDestroy()
         {
+            SetUIScreenInput = null;
+
             Game.Instance.ShowSplashScreen -= ShowSplash;
         }
 
@@ -39,18 +49,36 @@ namespace Scripts.UI
             
             _splashScreen = Instantiate(splashScreenPrefab, transform);
         }
+        
+        private void ShowSplash() => ShowScreen(UIScreenType.Splash);
 
-        /// <summary>
-        /// Shows the splash screen.
-        /// </summary>
-        private void ShowSplash()
+        private void ShowScreen(UIScreenType newScreenState)
         {
-            if(_splashScreen == null)
-                return;
+            switch(newScreenState)
+            {
+                case UIScreenType.Splash:
+                    if(_splashScreen == null)
+                        return;
 
-            _splashScreen.Show();
+                    // TODO - The logic to show the game board is temporary, it will be removed later
+                    _splashScreen.Show(onHidden: () => ShowScreen(UIScreenType.GameBoard));
+                    break;
+                    
+                case UIScreenType.GameBoard:
+                    SetUIScreenInput?.Invoke(newScreenState);
+
+                    break;
+            }
         }
 
         #endregion Methods
+    }
+
+    [Serializable]
+    public enum UIScreenType
+    {
+        Splash = 0,
+        MainMenu = 1,
+        GameBoard = 2
     }
 }

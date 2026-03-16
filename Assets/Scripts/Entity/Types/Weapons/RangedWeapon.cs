@@ -19,7 +19,7 @@ namespace Scripts.Entity.Weapons
 
         public void Fire()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         #endregion

@@ -9,7 +9,7 @@ namespace Scripts.Entity.Collectibles
 
         public void GetCollected()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         #endregion

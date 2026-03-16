@@ -26,17 +26,17 @@ namespace Scripts.Entity.Shootables
         
         public void Damage()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void GetDamaged()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void GetTargeted()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void Move(Vector2 direction)

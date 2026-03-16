@@ -60,6 +60,7 @@ namespace Scripts.UI
                     if(_splashScreen == null)
                         return;
 
+                    // TODO - The logic to show the game board is temporary, it will be removed later
                     _splashScreen.Show(onHidden: () => ShowScreen(UIScreenType.GameBoard));
                     break;
                     

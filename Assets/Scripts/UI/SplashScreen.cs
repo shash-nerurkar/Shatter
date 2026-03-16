@@ -45,7 +45,8 @@ namespace Scripts.UI
         {
             gameObject.SetActive(false);
 
-            _onHidden?.Invoke();
+            Action onHidden = _onHidden;
+            onHidden?.Invoke();
             _onHidden = null;
         }
 

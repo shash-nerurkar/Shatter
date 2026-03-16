@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace Scripts.UI
 {
+    /// <summary>
+    /// The central manager for the app's UI.
+    /// </summary>
     public class UIManager : MonoBehaviour
     {
         #region Fields
@@ -15,12 +18,9 @@ namespace Scripts.UI
         
         private void Awake()
         {
-            Game.Instance.ShowSplashScreen += ShowSplash;
+            LoadSplashScreen();
 
-            _splashScreen = Instantiate(
-                Resources.Load<SplashScreen>(Constants.FilePaths.SplashScreenPrefab),
-                transform
-            );
+            Game.Instance.ShowSplashScreen += ShowSplash;
         }
 
         private void OnDestroy()
@@ -28,7 +28,28 @@ namespace Scripts.UI
             Game.Instance.ShowSplashScreen -= ShowSplash;
         }
 
-        private void ShowSplash() => _splashScreen.Show();
+        /// <summary>
+        /// Loads and instantiates the splash screen.
+        /// </summary>
+        private void LoadSplashScreen()
+        {
+            SplashScreen splashScreenPrefab = Resources.Load<SplashScreen>(Constants.FilePaths.SplashScreenPrefab);
+            if(splashScreenPrefab == null)
+                return;
+            
+            _splashScreen = Instantiate(splashScreenPrefab, transform);
+        }
+
+        /// <summary>
+        /// Shows the splash screen.
+        /// </summary>
+        private void ShowSplash()
+        {
+            if(_splashScreen == null)
+                return;
+
+            _splashScreen.Show();
+        }
 
         #endregion Methods
     }

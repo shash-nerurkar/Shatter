@@ -1,9 +1,7 @@
 using System;
-using Scripts.Gameplay.Board;
-using Scripts.Gameplay.Cameras;
-using Scripts.Input;
-using Scripts.UI;
+using Scripts.Constants;
 using UnityEngine;
+using Scripts.Utilities;
 
 namespace Scripts
 {
@@ -14,18 +12,19 @@ namespace Scripts
     {
         #region Actions
     
-        public event Action ShowSplashScreen;
+        public event Action<Action> ShowSplashScreen;
+
+        public event Action StartDummyLevel;
 
         #endregion
 
 
         #region Fields
 
-        [SerializeField] private GameObject UIManagerObject;
-
-        [SerializeField] private GameObject CameraManagerObject;
-
         public static Game Instance { get; private set; }
+
+        // TODO - This will be moved elsewhere in a level-setup PR
+        public readonly Vector2 BoardSizeMaxInGameTiles = new (10, 17);
 
         #endregion Fields
 
@@ -46,7 +45,8 @@ namespace Scripts
 
         private void Start()
         {
-            ShowSplashScreen?.Invoke();
+            // TODO - This will be moved elsewhere in a level-setup PR
+            ShowSplashScreen?.Invoke(StartDummyLevel);
         }
 
         /// <summary>
@@ -54,18 +54,37 @@ namespace Scripts
         /// </summary>
         private void LoadCentralManagers()
         {
-            UIManagerObject.AddComponent<UIManager>();
+            MiscUtils.InstantiatePrefab<GameObject>(
+                path: FilePaths.UIManagerPrefab, 
+                parent: transform.parent, 
+                name: "UI", 
+                siblingIndex: transform.GetSiblingIndex() + 1
+            );
 
-            GameObject newGameObject = new("Input Manager");
-            newGameObject.transform.SetParent(transform);
-            newGameObject.AddComponent<InputManager>();
+            MiscUtils.InstantiateEmpty(transform.parent, "----------------------------", siblingIndex: transform.GetSiblingIndex() + 1);
+            
+            MiscUtils.InstantiatePrefab<GameObject>(
+                path: FilePaths.CameraManagerPrefab, 
+                parent: transform.parent, 
+                name: "Cameras", 
+                siblingIndex: transform.GetSiblingIndex() + 1
+            );
 
-            newGameObject = new("Board Manager");
-            newGameObject.transform.SetParent(transform.parent);
-            newGameObject.transform.SetSiblingIndex(gameObject.transform.GetSiblingIndex() + 1);
-            newGameObject.AddComponent<BoardManager>();
-
-            CameraManagerObject.AddComponent<CameraManager>();
+            MiscUtils.InstantiateEmpty(transform.parent, "----------------------------", siblingIndex: transform.GetSiblingIndex() + 1);
+            
+            MiscUtils.InstantiatePrefab<GameObject>(
+                path: FilePaths.InputManagerPrefab, 
+                parent: transform.parent, 
+                name: "Input", 
+                siblingIndex: transform.GetSiblingIndex() + 1
+            );
+            
+            MiscUtils.InstantiatePrefab<GameObject>(
+                path: FilePaths.BoardManagerPrefab, 
+                parent: transform.parent, 
+                name: "Board", 
+                siblingIndex: transform.GetSiblingIndex() + 1
+            );
         }
 
         #endregion Methods

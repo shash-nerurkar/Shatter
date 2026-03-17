@@ -37,7 +37,6 @@ namespace Scripts
             }
 
             Instance = this;
-            DontDestroyOnLoad(gameObject);
             
             LoadCentralManagers();
         }

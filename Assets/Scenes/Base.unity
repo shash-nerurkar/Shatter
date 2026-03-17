@@ -604,6 +604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game
   UIManagerObject: {fileID: 129869431}
+  CameraManagerObject: {fileID: 369906701}
 --- !u!1 &2092168074
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,6 @@
 using System;
+using Scripts.Gameplay.Board;
+using Scripts.Gameplay.Cameras;
 using Scripts.Input;
 using Scripts.UI;
 using UnityEngine;
@@ -19,9 +21,11 @@ namespace Scripts
 
         #region Fields
 
-        public static Game Instance { get; private set; }
-
         [SerializeField] private GameObject UIManagerObject;
+
+        [SerializeField] private GameObject CameraManagerObject;
+
+        public static Game Instance { get; private set; }
 
         #endregion Fields
 
@@ -35,7 +39,6 @@ namespace Scripts
                 Destroy(gameObject);
                 return;
             }
-
             Instance = this;
             
             LoadCentralManagers();
@@ -56,6 +59,13 @@ namespace Scripts
             GameObject newGameObject = new("Input Manager");
             newGameObject.transform.SetParent(transform);
             newGameObject.AddComponent<InputManager>();
+
+            newGameObject = new("Board Manager");
+            newGameObject.transform.SetParent(transform.parent);
+            newGameObject.transform.SetSiblingIndex(gameObject.transform.GetSiblingIndex() + 1);
+            newGameObject.AddComponent<BoardManager>();
+
+            CameraManagerObject.AddComponent<CameraManager>();
         }
 
         #endregion Methods

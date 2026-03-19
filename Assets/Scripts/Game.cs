@@ -24,7 +24,8 @@ namespace Scripts
         public static Game Instance { get; private set; }
 
         // TODO - This will be moved elsewhere in a level-setup PR
-        public readonly Vector2 BoardSizeMaxInGameTiles = new (10, 17);
+        public readonly Vector2 BoardSizeMaxInGameTiles = new (10, 18);
+        public readonly int BoardSafeAreaYInTiles = 1;
 
         #endregion Fields
 
@@ -45,8 +46,10 @@ namespace Scripts
 
         private void Start()
         {
-            // TODO - This will be moved elsewhere in a level-setup PR
-            ShowSplashScreen?.Invoke(StartDummyLevel);
+            ShowSplashScreen?.Invoke(
+                // TODO - This will be moved elsewhere in a level-setup PR
+                StartDummyLevel
+            );
         }
 
         /// <summary>
@@ -79,6 +82,7 @@ namespace Scripts
                 siblingIndex: transform.GetSiblingIndex() + 1
             );
             
+            // TODO - This will be moved elsewhere in a level-setup PR
             MiscUtils.InstantiatePrefab<GameObject>(
                 path: FilePaths.BoardManagerPrefab, 
                 parent: transform.parent, 

@@ -1,4 +1,6 @@
 using System;
+using Scripts.Constants;
+using Scripts.Utilities;
 using UnityEngine;
 
 namespace Scripts.UI
@@ -29,6 +31,7 @@ namespace Scripts.UI
             LoadSplashScreen();
 
             Game.Instance.ShowSplashScreen += ShowSplash;
+            Game.Instance.StartDummyLevel += OnDummyLevelStart;
         }
 
         private void OnDestroy()
@@ -36,6 +39,7 @@ namespace Scripts.UI
             SetUIScreenInput = null;
 
             Game.Instance.ShowSplashScreen -= ShowSplash;
+            Game.Instance.StartDummyLevel -= OnDummyLevelStart;
         }
 
         /// <summary>
@@ -43,35 +47,18 @@ namespace Scripts.UI
         /// </summary>
         private void LoadSplashScreen()
         {
-            SplashScreen splashScreenPrefab = Resources.Load<SplashScreen>(Constants.FilePaths.SplashScreenPrefab);
-            if(splashScreenPrefab == null)
-                return;
-            
-            _splashScreen = Instantiate(splashScreenPrefab, transform);
+            _splashScreen = MiscUtils.InstantiatePrefab<SplashScreen>(
+                path: FilePaths.SplashScreenPrefab, 
+                parent: transform, 
+                name: "Splash Screen"
+            );
         }
         
-        private void ShowSplash() => ShowScreen(UIScreenType.Splash);
+        private void ShowSplash(Action onHidden) => _splashScreen.Show(onHidden);
 
-        private void ShowScreen(UIScreenType newScreenState)
-        {
-            switch(newScreenState)
-            {
-                case UIScreenType.Splash:
-                    if(_splashScreen == null)
-                        return;
+        private void OnDummyLevelStart() => SetUIScreenInput?.Invoke(UIScreenType.GameBoard);
 
-                    // TODO - The logic to show the game board is temporary, it will be removed later
-                    _splashScreen.Show(onHidden: () => ShowScreen(UIScreenType.GameBoard));
-                    break;
-                    
-                case UIScreenType.GameBoard:
-                    SetUIScreenInput?.Invoke(newScreenState);
-
-                    break;
-            }
-        }
-
-        #endregion Methods
+        #endregion
     }
 
     [Serializable]

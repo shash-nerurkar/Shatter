@@ -1,7 +1,7 @@
 using System;
-using Scripts.Input;
-using Scripts.UI;
+using Scripts.Constants;
 using UnityEngine;
+using Scripts.Utilities;
 
 namespace Scripts
 {
@@ -12,7 +12,9 @@ namespace Scripts
     {
         #region Actions
     
-        public event Action ShowSplashScreen;
+        public event Action<Action> ShowSplashScreen;
+
+        public event Action StartDummyLevel;
 
         #endregion
 
@@ -21,7 +23,9 @@ namespace Scripts
 
         public static Game Instance { get; private set; }
 
-        [SerializeField] private GameObject UIManagerObject;
+        // TODO - This will be moved elsewhere in a level-setup PR
+        public readonly Vector2 BoardSizeMaxInGameTiles = new (10, 18);
+        public readonly Vector2 BoardSafeAreaSizeInTiles = new (1, 1);
 
         #endregion Fields
 
@@ -35,16 +39,23 @@ namespace Scripts
                 Destroy(gameObject);
                 return;
             }
-
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            
+            Screen.orientation = ScreenOrientation.Portrait;
+            Screen.autorotateToPortrait          = true;
+            Screen.autorotateToPortraitUpsideDown = false;
+            Screen.autorotateToLandscapeLeft     = false;
+            Screen.autorotateToLandscapeRight    = false;
             
             LoadCentralManagers();
         }
 
         private void Start()
         {
-            ShowSplashScreen?.Invoke();
+            ShowSplashScreen?.Invoke(
+                // TODO - This will be moved elsewhere in a level-setup PR
+                StartDummyLevel
+            );
         }
 
         /// <summary>
@@ -52,11 +63,38 @@ namespace Scripts
         /// </summary>
         private void LoadCentralManagers()
         {
-            UIManagerObject.AddComponent<UIManager>();
+            MiscUtils.InstantiatePrefab<GameObject>(
+                path: FilePaths.UIManagerPrefab, 
+                parent: transform.parent, 
+                name: "UI", 
+                siblingIndex: transform.GetSiblingIndex() + 1
+            );
 
-            GameObject newGameObject = new("Input Manager");
-            newGameObject.transform.SetParent(transform);
-            newGameObject.AddComponent<InputManager>();
+            MiscUtils.InstantiateEmpty(transform.parent, "----------------------------", siblingIndex: transform.GetSiblingIndex() + 1);
+            
+            MiscUtils.InstantiatePrefab<GameObject>(
+                path: FilePaths.CameraManagerPrefab, 
+                parent: transform.parent, 
+                name: "Cameras", 
+                siblingIndex: transform.GetSiblingIndex() + 1
+            );
+
+            MiscUtils.InstantiateEmpty(transform.parent, "----------------------------", siblingIndex: transform.GetSiblingIndex() + 1);
+            
+            MiscUtils.InstantiatePrefab<GameObject>(
+                path: FilePaths.InputManagerPrefab, 
+                parent: transform.parent, 
+                name: "Input", 
+                siblingIndex: transform.GetSiblingIndex() + 1
+            );
+            
+            // TODO - This will be moved elsewhere in a level-setup PR
+            MiscUtils.InstantiatePrefab<GameObject>(
+                path: FilePaths.BoardManagerPrefab, 
+                parent: transform.parent, 
+                name: "Board", 
+                siblingIndex: transform.GetSiblingIndex() + 1
+            );
         }
 
         #endregion Methods

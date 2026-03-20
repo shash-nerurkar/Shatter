@@ -41,6 +41,12 @@ namespace Scripts
             }
             Instance = this;
             
+            Screen.orientation = ScreenOrientation.Portrait;
+            Screen.autorotateToPortrait          = true;
+            Screen.autorotateToPortraitUpsideDown = false;
+            Screen.autorotateToLandscapeLeft     = false;
+            Screen.autorotateToLandscapeRight    = false;
+            
             LoadCentralManagers();
         }
 

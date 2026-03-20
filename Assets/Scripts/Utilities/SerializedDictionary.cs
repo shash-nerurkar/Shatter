@@ -52,7 +52,10 @@ namespace Scripts.Utilities
             foreach (var entry in entries)
             {
                 if (entry.key == null || ContainsKey(entry.key))
+                {
+                    Debug.LogWarning($"Skipping duplicate key '{entry.key}' in dictionary '{this.GetType().Name}'");
                     continue;
+                }
 
                 this[entry.key] = entry.value;
             }

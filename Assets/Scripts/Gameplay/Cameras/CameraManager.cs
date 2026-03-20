@@ -29,7 +29,7 @@ namespace Scripts.Gameplay.Cameras
             OnLevelStart(
                 new CameraData(
                     Game.Instance.BoardSizeMaxInGameTiles, 
-                    Game.Instance.BoardSafeAreaYInTiles
+                    Game.Instance.BoardSafeAreaSizeInTiles
                 )
             );
         }
@@ -37,7 +37,10 @@ namespace Scripts.Gameplay.Cameras
         private void OnLevelStart(CameraData cameraData)
         {
             mainCamera.orthographic = true;
-            mainCamera.orthographicSize = (cameraData.BoardSizeInTiles.y + cameraData.BoardSafeAreaYInTiles) / 2;
+
+            float requiredHalfHeight = (cameraData.BoardSizeInTiles.y + cameraData.BoardSafeAreaSizeInTiles.y) / 2f;
+            float requiredHalfWidthAsHeight = (cameraData.BoardSizeInTiles.x  + cameraData.BoardSafeAreaSizeInTiles.y) / (2f * mainCamera.aspect);
+            mainCamera.orthographicSize = Mathf.Max(requiredHalfHeight, requiredHalfWidthAsHeight);
         }
 
         #endregion
@@ -54,14 +57,14 @@ namespace Scripts.Gameplay.Cameras
         public Vector2 BoardSizeInTiles { get; }
 
         /// <summary>
-        /// The safe area of the board height in tiles.
+        /// The size of the board's safe area in tiles.
         /// </summary>
-        public int BoardSafeAreaYInTiles { get; }
+        public Vector2 BoardSafeAreaSizeInTiles { get; }
 
-        public CameraData(Vector2 boardSizeInTiles, int boardSafeAreaYInTiles)
+        public CameraData(Vector2 boardSizeInTiles, Vector2 boardSafeAreaSizeInTiles)
         {
             BoardSizeInTiles = boardSizeInTiles;
-            BoardSafeAreaYInTiles = boardSafeAreaYInTiles;
+            BoardSafeAreaSizeInTiles = boardSafeAreaSizeInTiles;
         }
     }
 }

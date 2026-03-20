@@ -25,7 +25,7 @@ namespace Scripts
 
         // TODO - This will be moved elsewhere in a level-setup PR
         public readonly Vector2 BoardSizeMaxInGameTiles = new (10, 18);
-        public readonly int BoardSafeAreaYInTiles = 1;
+        public readonly Vector2 BoardSafeAreaSizeInTiles = new (1, 1);
 
         #endregion Fields
 

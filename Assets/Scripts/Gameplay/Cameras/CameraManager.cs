@@ -1,9 +1,16 @@
+using System;
 using UnityEngine;
 
 namespace Scripts.Gameplay.Cameras
 {
     public class CameraManager : MonoBehaviour
     {
+        #region Actions
+
+        public static event Action<Camera> UpdateMainCamera;
+
+        #endregion
+
         #region Fields
         
         [SerializeField] private Camera mainCamera;
@@ -21,6 +28,11 @@ namespace Scripts.Gameplay.Cameras
         private void OnDestroy()
         {
             Game.Instance.StartDummyLevel -= OnDummyLevelStart;
+        }
+
+        private void Start()
+        {
+            UpdateMainCamera?.Invoke(mainCamera);
         }
 
         // TODO - Will be removed in level-setup PR

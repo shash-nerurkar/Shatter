@@ -1,6 +1,11 @@
 using System;
-using Scripts.Constants;
-using Scripts.Utilities;
+using Scripts.Contracts;
+using Scripts.Gameplay.Cameras;
+using Scripts.UI.GameUI;
+using Scripts.UI.MenuUI;
+using Scripts.UI.OverlayUI;
+using Scripts.UI.SystemUI;
+using Scripts.UI.WorldUI;
 using UnityEngine;
 
 namespace Scripts.UI
@@ -8,7 +13,7 @@ namespace Scripts.UI
     /// <summary>
     /// The central manager for the app's UI.
     /// </summary>
-    public class UIManager : MonoBehaviour
+    public class UIManager : MonoBehaviour, IManager
     {
         #region Actions
 
@@ -16,47 +21,52 @@ namespace Scripts.UI
 
         #endregion
 
-
         #region Fields
 
-        private SplashScreen _splashScreen;
+        [SerializeField] private WorldUIHandler worldUIHandler;
+
+        [SerializeField] private GameUIHandler gameUIHandler;
+
+        [SerializeField] private MenuUIHandler menuUIHandler;
+
+        [SerializeField] private OverlayUIHandler overlayUIHandler;
+
+        [SerializeField] private SystemUIHandler systemUIHandler;
 
         #endregion Fields
 
-
         #region Methods
+
+        public void Init()
+        {
+            worldUIHandler.RectTransform.anchoredPosition = -transform.position;
+        }
         
         private void Awake()
         {
-            LoadSplashScreen();
+            Game.Instance.ShowSplashScreen += systemUIHandler.ShowSplash;
+            Game.Instance.StartDummyLevel += OnLevelStart;
 
-            Game.Instance.ShowSplashScreen += ShowSplash;
-            Game.Instance.StartDummyLevel += OnDummyLevelStart;
+            CameraManager.UpdateMainCamera += worldUIHandler.OnMainCameraChanged;
         }
 
         private void OnDestroy()
         {
             SetUIScreenInput = null;
 
-            Game.Instance.ShowSplashScreen -= ShowSplash;
-            Game.Instance.StartDummyLevel -= OnDummyLevelStart;
+            Game.Instance.ShowSplashScreen -= systemUIHandler.ShowSplash;
+            Game.Instance.StartDummyLevel -= OnLevelStart;
+
+            CameraManager.UpdateMainCamera -= worldUIHandler.OnMainCameraChanged;
         }
 
-        /// <summary>
-        /// Loads and instantiates the splash screen.
-        /// </summary>
-        private void LoadSplashScreen()
+        private void OnLevelStart()
         {
-            _splashScreen = MiscUtils.InstantiatePrefab<SplashScreen>(
-                path: FilePaths.SplashScreenPrefab, 
-                parent: transform, 
-                name: "Splash Screen"
-            );
-        }
-        
-        private void ShowSplash(Action onHidden) => _splashScreen.Show(onHidden);
+            SetUIScreenInput?.Invoke(UIScreenType.GameBoard);
 
-        private void OnDummyLevelStart() => SetUIScreenInput?.Invoke(UIScreenType.GameBoard);
+            gameUIHandler.OnLevelStart();
+            worldUIHandler.OnLevelStart();
+        }
 
         #endregion
     }

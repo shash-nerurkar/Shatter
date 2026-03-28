@@ -2,6 +2,10 @@ using System;
 using Scripts.Constants;
 using UnityEngine;
 using Scripts.Utilities;
+using Scripts.UI;
+using Scripts.Gameplay.Cameras;
+using Scripts.Input;
+using Scripts.Gameplay.Board;
 
 namespace Scripts
 {
@@ -18,7 +22,6 @@ namespace Scripts
 
         #endregion
 
-
         #region Fields
 
         public static Game Instance { get; private set; }
@@ -28,7 +31,6 @@ namespace Scripts
         public readonly Vector2 BoardSafeAreaSizeInTiles = new (1, 1);
 
         #endregion Fields
-
 
         #region Methods
 
@@ -63,38 +65,44 @@ namespace Scripts
         /// </summary>
         private void LoadCentralManagers()
         {
-            MiscUtils.InstantiatePrefab<GameObject>(
+            UIManager uiManager = MiscUtils.InstantiatePrefab<UIManager>(
                 path: FilePaths.UIManagerPrefab, 
                 parent: transform.parent, 
                 name: "UI", 
+                position: new Vector3(Screen.width, Screen.height, 0) / 2,
+                rotation: Quaternion.identity,
                 siblingIndex: transform.GetSiblingIndex() + 1
             );
+            uiManager.Init();
 
             MiscUtils.InstantiateEmpty(transform.parent, "----------------------------", siblingIndex: transform.GetSiblingIndex() + 1);
             
-            MiscUtils.InstantiatePrefab<GameObject>(
+            CameraManager cameraManager = MiscUtils.InstantiatePrefab<CameraManager>(
                 path: FilePaths.CameraManagerPrefab, 
                 parent: transform.parent, 
                 name: "Cameras", 
                 siblingIndex: transform.GetSiblingIndex() + 1
             );
+            cameraManager.Init();
 
             MiscUtils.InstantiateEmpty(transform.parent, "----------------------------", siblingIndex: transform.GetSiblingIndex() + 1);
             
-            MiscUtils.InstantiatePrefab<GameObject>(
+            InputManager inputManager = MiscUtils.InstantiatePrefab<InputManager>(
                 path: FilePaths.InputManagerPrefab, 
                 parent: transform.parent, 
                 name: "Input", 
                 siblingIndex: transform.GetSiblingIndex() + 1
             );
+            inputManager.Init();
             
             // TODO - This will be moved elsewhere in a level-setup PR
-            MiscUtils.InstantiatePrefab<GameObject>(
+            BoardManager boardManager = MiscUtils.InstantiatePrefab<BoardManager>(
                 path: FilePaths.BoardManagerPrefab, 
                 parent: transform.parent, 
                 name: "Board", 
                 siblingIndex: transform.GetSiblingIndex() + 1
             );
+            boardManager.Init();
         }
 
         #endregion Methods

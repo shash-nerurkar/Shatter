@@ -1,17 +1,26 @@
+using System;
+using Scripts.Contracts;
 using UnityEngine;
 
 namespace Scripts.Gameplay.Cameras
 {
-    public class CameraManager : MonoBehaviour
+    public class CameraManager : MonoBehaviour, IManager
     {
+        #region Actions
+
+        public static event Action<Camera> UpdateMainCamera;
+
+        #endregion
+
         #region Fields
         
         [SerializeField] private Camera mainCamera;
         
         #endregion
-
         
         #region Methods
+
+        public void Init() {}
         
         private void Awake()
         {
@@ -20,7 +29,14 @@ namespace Scripts.Gameplay.Cameras
 
         private void OnDestroy()
         {
+            UpdateMainCamera = null;
+
             Game.Instance.StartDummyLevel -= OnDummyLevelStart;
+        }
+
+        private void Start()
+        {
+            UpdateMainCamera?.Invoke(mainCamera);
         }
 
         // TODO - Will be removed in level-setup PR

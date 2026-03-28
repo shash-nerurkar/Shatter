@@ -3,10 +3,11 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Scripts.Utilities;
 using System.Collections.Generic;
+using Scripts.Contracts;
 
 namespace Scripts.Gameplay.Board
 {
-    public class BoardManager : MonoBehaviour
+    public class BoardManager : MonoBehaviour, IManager
     {
         #region Fields
         
@@ -21,9 +22,10 @@ namespace Scripts.Gameplay.Board
         private BoardData _boardData;
         
         #endregion
-
         
         #region Methods
+
+        public void Init() {}
         
         private void Awake()
         {

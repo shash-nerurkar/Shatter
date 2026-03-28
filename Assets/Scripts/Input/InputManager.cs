@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Scripts.Contracts;
 using Scripts.Input.Handlers;
 using Scripts.Input.Handlers.Board;
 using Scripts.UI;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Scripts.Input
 {
-    public class InputManager : MonoBehaviour
+    public class InputManager : MonoBehaviour, IManager
     {
         #region Fields
 
@@ -16,8 +17,9 @@ namespace Scripts.Input
 
         #endregion
 
-
         #region Methods
+
+        public void Init() {}
 
         private void Awake()
         {

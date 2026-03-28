@@ -1,4 +1,6 @@
-using Scripts.Gameplay.Cameras;
+using Scripts.Constants;
+using Scripts.UI.WorldUI.Enemy.Health;
+using Scripts.Utilities;
 using UnityEngine;
 
 namespace Scripts.UI.WorldUI
@@ -9,21 +11,37 @@ namespace Scripts.UI.WorldUI
 
         [SerializeField] private Canvas canvas;
 
+        private EnemyHealthBarSpawner _enemyHealthBarSpawner;
+
+        public RectTransform RectTransform
+        {
+            get => transform as RectTransform;
+        }
+
         #endregion
 
         #region Methods
 
-        private void Awake()
-        {
-            CameraManager.UpdateMainCamera += OnMainCameraChanged;
-        }
+        public void OnMainCameraChanged(Camera mainCamera) => canvas.worldCamera = mainCamera;
 
-        private void OnDestroy()
+        public void OnLevelStart()
         {
-            CameraManager.UpdateMainCamera -= OnMainCameraChanged;
-        }
+            _enemyHealthBarSpawner = MiscUtils.InstantiatePrefab<EnemyHealthBarSpawner>(
+                path: FilePaths.EnemyHealthBarSpawnerPrefab, 
+                parent: transform, 
+                name: "Enemy Health Bars"
+            );
 
-        private void OnMainCameraChanged(Camera mainCamera) => canvas.worldCamera = mainCamera;
+            if(_enemyHealthBarSpawner != null)
+            {
+                _enemyHealthBarSpawner.Init();
+
+                // TODO - This will be changed in an enemy-spawning PR
+                int spawnCount = Random.Range(2, 5);
+                for (int i = 0; i < spawnCount; i++) 
+                    _enemyHealthBarSpawner.Spawn();
+            }
+        }
 
         #endregion
     }

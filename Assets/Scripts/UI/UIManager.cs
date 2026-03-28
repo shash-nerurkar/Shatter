@@ -1,4 +1,6 @@
 using System;
+using Scripts.Contracts;
+using Scripts.Gameplay.Cameras;
 using Scripts.UI.GameUI;
 using Scripts.UI.MenuUI;
 using Scripts.UI.OverlayUI;
@@ -11,14 +13,13 @@ namespace Scripts.UI
     /// <summary>
     /// The central manager for the app's UI.
     /// </summary>
-    public class UIManager : MonoBehaviour
+    public class UIManager : MonoBehaviour, IManager
     {
         #region Actions
 
         public static event Action<UIScreenType> SetUIScreenInput;
 
         #endregion
-
 
         #region Fields
 
@@ -34,13 +35,19 @@ namespace Scripts.UI
 
         #endregion Fields
 
-
         #region Methods
+
+        public void Init()
+        {
+            worldUIHandler.RectTransform.anchoredPosition = -transform.position;
+        }
         
         private void Awake()
         {
             Game.Instance.ShowSplashScreen += systemUIHandler.ShowSplash;
             Game.Instance.StartDummyLevel += OnLevelStart;
+
+            CameraManager.UpdateMainCamera += worldUIHandler.OnMainCameraChanged;
         }
 
         private void OnDestroy()
@@ -49,11 +56,16 @@ namespace Scripts.UI
 
             Game.Instance.ShowSplashScreen -= systemUIHandler.ShowSplash;
             Game.Instance.StartDummyLevel -= OnLevelStart;
+
+            CameraManager.UpdateMainCamera -= worldUIHandler.OnMainCameraChanged;
         }
 
         private void OnLevelStart()
         {
             SetUIScreenInput?.Invoke(UIScreenType.GameBoard);
+
+            gameUIHandler.OnLevelStart();
+            worldUIHandler.OnLevelStart();
         }
 
         #endregion

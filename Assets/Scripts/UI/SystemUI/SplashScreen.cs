@@ -6,7 +6,7 @@ namespace Scripts.UI
     /// <summary>
     /// Manages the splash screen UI.
     /// </summary>
-    public class SplashScreen : MonoBehaviour
+    public class SplashScreen : MonoBehaviour, IScreen
     {
         #region Actions
 
@@ -41,7 +41,7 @@ namespace Scripts.UI
         /// <summary>
         /// Hides the splash screen.
         /// </summary>
-        private void Hide()
+        public void Hide()
         {
             gameObject.SetActive(false);
 

@@ -24,6 +24,9 @@ namespace Scripts.UI.WorldUI.Enemy.Health
         // TODO - This will be changed in an enemy-spawning PR
         public void Spawn()
         {
+            if(_spawnedEnemyHealthBars == null)
+                return;
+
             EnemyHealthBar healthBar = MiscUtils.InstantiatePrefab<GameObject, EnemyHealthBar>(
                 prefab: enemyHealthBarPrefab, 
                 parent: transform, 

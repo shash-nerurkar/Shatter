@@ -42,8 +42,8 @@ namespace Scripts.Utilities
             string name = null, int? siblingIndex = null
         ) where T1 : Object where T2 : Object
         {
-            T1 instance = rotation.HasValue && position.HasValue 
-                ? Object.Instantiate(prefab, (Vector3)position, (Quaternion)rotation, parent)
+            T1 instance = rotation.HasValue || position.HasValue 
+                ? Object.Instantiate(prefab, position ?? Vector3.zero, rotation ?? Quaternion.identity, parent)
                 : Object.Instantiate(prefab, parent);
 
             GameObject gameObject = instance as GameObject;

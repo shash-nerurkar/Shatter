@@ -17,28 +17,39 @@ namespace Scripts.UI
 
         [SerializeField] protected Text maxProgressLabel;
 
+        private Tween _sliderProgressTween;
+
+        private Tween _progressTextTween;
+
+        private Tween _maxProgressTextTween;
+
         #endregion
 
         #region Methods
+
+        public void OnDestroy()
+        {
+            _sliderProgressTween?.Kill();
+            _progressTextTween?.Kill();
+            _maxProgressTextTween?.Kill();
+        }
 
         /// <summary>
         /// Sets up the progress bar.
         /// </summary>
         /// <param name="max">The maximum value of the progress bar.</param>
         /// <param name="current">The current value of the progress bar. Defaults to 0.</param>
-        /// <param name="dontSetProgress">Whether to skip setting the progress. Defaults to false.</param>
-        /// <param name="dontSetCurrentProgressText">Whether to skip setting the current progress text. Defaults to false.</param>
         /// <param name="dontSetMaxProgressText">Whether to skip setting the maximum progress text. Defaults to false.</param>
-        public virtual void Setup(float max, float current = 0, bool dontSetProgress = false, bool dontSetCurrentProgressText = false, bool dontSetMaxProgressText = false)
+        public virtual void Setup(float max, float? current = 0, bool dontSetMaxProgressText = false)
         {
             if(progressSlider != null)
                 progressSlider.maxValue = max;
             
-            if(!dontSetProgress)
-                SetProgress(current);
+            if(current.HasValue)
+                SetProgress(current.Value);
 
-            if(!dontSetCurrentProgressText)
-                SetCurrentProgressText(current);
+            if(current.HasValue)
+                SetCurrentProgressText(current.Value);
 
             if(!dontSetMaxProgressText)
                 SetMaxProgressText(max);
@@ -58,8 +69,11 @@ namespace Scripts.UI
         /// </summary>
         public virtual void AnimateProgress(float newValue, float duration = 0.5f, Ease ease = Ease.InOutSine)
         {
-            if(progressSlider != null)
-                DOTween.To(() => progressSlider.value, x => progressSlider.value = x, newValue, duration).SetEase(ease);
+            if (progressSlider == null)
+                return;
+
+            _sliderProgressTween?.Kill();
+            _sliderProgressTween = DOTween.To(() => progressSlider.value, x => progressSlider.value = x, newValue, duration).SetEase(ease);
         }
 
         /// <summary>
@@ -76,16 +90,13 @@ namespace Scripts.UI
         /// </summary>
         public void AnimateCurrentProgressText(float newValue, float duration = 0.5f, Ease ease = Ease.InOutSine)
         {
-            if(currentProgressLabel != null)
-            {
-                float currentValue = 0;
-                if (float.TryParse(currentProgressLabel.text, out float parsedValue))
-                {
-                    currentValue = parsedValue;
-                }
+            if (currentProgressLabel == null)
+                return;
+            
+            float.TryParse(currentProgressLabel.text, out float startValue);
 
-                DOTween.To(() => currentValue, x => currentProgressLabel.text = x.ToString(), newValue, duration).SetEase(ease);
-            }
+            _progressTextTween?.Kill();
+            _progressTextTween = DOTween.To(() => startValue, x => currentProgressLabel.text = x.ToString(), newValue, duration).SetEase(ease);
         }
 
         /// <summary>
@@ -102,16 +113,13 @@ namespace Scripts.UI
         /// </summary>
         public void AnimateMaxProgressText(float newValue, float duration = 0.5f, Ease ease = Ease.InOutSine)
         {
-            if(maxProgressLabel != null)
-            {
-                float currentValue = 0;
-                if (float.TryParse(maxProgressLabel.text, out float parsedValue))
-                {
-                    currentValue = parsedValue;
-                }
+            if (maxProgressLabel == null)
+                return;
+            
+            float.TryParse(maxProgressLabel.text, out float startValue);
 
-                DOTween.To(() => currentValue, x => maxProgressLabel.text = x.ToString(), newValue, duration).SetEase(ease);
-            }
+            _maxProgressTextTween?.Kill();
+            _maxProgressTextTween = DOTween.To(() => startValue, x => maxProgressLabel.text = x.ToString(), newValue, duration).SetEase(ease);
         }
 
         #endregion

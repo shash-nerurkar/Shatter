@@ -6,9 +6,12 @@ namespace Scripts.UI.WorldUI.Enemy.Health
     {
         #region Fields
 
+        private RectTransform _rectTransform;
         private RectTransform RectTransform
         {
-            get => transform as RectTransform;
+            get => _rectTransform = _rectTransform != null 
+                        ? _rectTransform 
+                        : transform as RectTransform;
         }
 
         #endregion

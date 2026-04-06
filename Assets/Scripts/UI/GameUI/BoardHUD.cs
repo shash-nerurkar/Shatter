@@ -1,3 +1,5 @@
+using Scripts.Entity.Playables;
+using Scripts.Gameplay.Levels;
 using UnityEngine;
 
 namespace Scripts.UI.GameUI
@@ -13,12 +15,15 @@ namespace Scripts.UI.GameUI
 
         #region Methods
 
-        public void Initialize()
+        public void SetupLevelProgressBar(LevelProgressData levelProgressData)
         {
-            // TODO - This will be rewritten in player init PR
-            playerHealthBar.Setup(max: 100, current: 100);
-            // TODO - This will be rewritten in level-generation setup PR
-            levelProgressBar.Setup(max: 5, current: 5);
+            levelProgressBar.Setup(max: levelProgressData.MaxProgress);
+        }
+
+        public void SetupPlayerHealthBar(PlayerData playerData)
+        {
+            playerHealthBar.Setup(max: playerData.MaxHealth);
+            playerHealthBar.AnimateProgress(playerData.CurrentHealth);
         }
 
         #endregion

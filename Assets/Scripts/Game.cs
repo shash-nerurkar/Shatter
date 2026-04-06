@@ -5,7 +5,7 @@ using Scripts.Utilities;
 using Scripts.UI;
 using Scripts.Gameplay.Cameras;
 using Scripts.Input;
-using Scripts.Gameplay.Board;
+using Scripts.Gameplay.Levels;
 
 namespace Scripts
 {
@@ -26,9 +26,7 @@ namespace Scripts
 
         public static Game Instance { get; private set; }
 
-        // TODO - This will be moved elsewhere in a level-setup PR
-        public readonly Vector2 BoardSizeMaxInGameTiles = new (10, 18);
-        public readonly Vector2 BoardSafeAreaSizeInTiles = new (1, 1);
+        public Camera MainCamera { get; private set; }
 
         #endregion Fields
 
@@ -50,12 +48,22 @@ namespace Scripts
             Screen.autorotateToLandscapeRight    = false;
             
             LoadCentralManagers();
+            
+            CameraManager.UpdateMainCamera += UpdateMainCamera;
+        }
+
+        private void OnDestroy()
+        {
+            CameraManager.UpdateMainCamera -= UpdateMainCamera;
+
+            ShowSplashScreen = null;
+            StartDummyLevel = null;
         }
 
         private void Start()
         {
             ShowSplashScreen?.Invoke(
-                // TODO - This will be moved elsewhere in a level-setup PR
+                // TODO - This will be rewritten in a UI-screens PR
                 StartDummyLevel
             );
         }
@@ -75,7 +83,7 @@ namespace Scripts
             );
             uiManager.Init();
 
-            MiscUtils.InstantiateEmpty(transform.parent, "----------------------------", siblingIndex: transform.GetSiblingIndex() + 1);
+            MiscUtils.InstantiateEmpty(transform.parent, Strings.SpacingObjectName, siblingIndex: transform.GetSiblingIndex() + 1);
             
             CameraManager cameraManager = MiscUtils.InstantiatePrefab<CameraManager>(
                 path: FilePaths.CameraManagerPrefab, 
@@ -85,7 +93,7 @@ namespace Scripts
             );
             cameraManager.Init();
 
-            MiscUtils.InstantiateEmpty(transform.parent, "----------------------------", siblingIndex: transform.GetSiblingIndex() + 1);
+            MiscUtils.InstantiateEmpty(transform.parent, Strings.SpacingObjectName, siblingIndex: transform.GetSiblingIndex() + 1);
             
             InputManager inputManager = MiscUtils.InstantiatePrefab<InputManager>(
                 path: FilePaths.InputManagerPrefab, 
@@ -94,16 +102,21 @@ namespace Scripts
                 siblingIndex: transform.GetSiblingIndex() + 1
             );
             inputManager.Init();
-            
-            // TODO - This will be moved elsewhere in a level-setup PR
-            BoardManager boardManager = MiscUtils.InstantiatePrefab<BoardManager>(
-                path: FilePaths.BoardManagerPrefab, 
+
+            MiscUtils.InstantiateEmpty(transform.parent, Strings.SpacingObjectName, siblingIndex: transform.GetSiblingIndex() + 1);
+
+            LevelManager levelManager = MiscUtils.InstantiatePrefab<LevelManager>(
+                path: FilePaths.LevelManagerPrefab, 
                 parent: transform.parent, 
-                name: "Board", 
+                name: "Levels", 
                 siblingIndex: transform.GetSiblingIndex() + 1
             );
-            boardManager.Init();
+            levelManager.Init();
+
+            MiscUtils.InstantiateEmpty(transform.parent, Strings.SpacingObjectName, siblingIndex: transform.GetSiblingIndex() + 1);
         }
+
+        private void UpdateMainCamera(Camera camera) => MainCamera = camera;
 
         #endregion Methods
     }

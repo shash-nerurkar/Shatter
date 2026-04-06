@@ -1,6 +1,6 @@
-using System;
 using Scripts.Contracts;
 using Scripts.Gameplay.Cameras;
+using Scripts.Gameplay.Levels;
 using Scripts.UI.GameUI;
 using Scripts.UI.MenuUI;
 using Scripts.UI.OverlayUI;
@@ -15,12 +15,6 @@ namespace Scripts.UI
     /// </summary>
     public class UIManager : MonoBehaviour, IManager
     {
-        #region Actions
-
-        public static event Action<UIScreenType> SetUIScreenInput;
-
-        #endregion
-
         #region Fields
 
         [SerializeField] private WorldUIHandler worldUIHandler;
@@ -45,37 +39,31 @@ namespace Scripts.UI
         private void Awake()
         {
             Game.Instance.ShowSplashScreen += systemUIHandler.ShowSplash;
-            Game.Instance.StartDummyLevel += OnLevelStart;
 
             CameraManager.UpdateMainCamera += worldUIHandler.OnMainCameraChanged;
+            
+            LevelManager.InitLevelUI += InitLevelUI;
+            LevelManager.OnPlayerDataUpdated += gameUIHandler.SetupPlayerHealthBar;
+            LevelManager.OnLevelProgressUpdated += gameUIHandler.SetupLevelProgressBar;
         }
 
         private void OnDestroy()
         {
-            SetUIScreenInput = null;
-
             Game.Instance.ShowSplashScreen -= systemUIHandler.ShowSplash;
-            Game.Instance.StartDummyLevel -= OnLevelStart;
 
             CameraManager.UpdateMainCamera -= worldUIHandler.OnMainCameraChanged;
+            
+            LevelManager.InitLevelUI -= InitLevelUI;
+            LevelManager.OnPlayerDataUpdated -= gameUIHandler.SetupPlayerHealthBar;
+            LevelManager.OnLevelProgressUpdated -= gameUIHandler.SetupLevelProgressBar;
         }
 
-        private void OnLevelStart()
+        private void InitLevelUI()
         {
-            SetUIScreenInput?.Invoke(UIScreenType.GameBoard);
-
             gameUIHandler.OnLevelStart();
             worldUIHandler.OnLevelStart();
         }
 
         #endregion
-    }
-
-    [Serializable]
-    public enum UIScreenType
-    {
-        Splash = 0,
-        MainMenu = 1,
-        GameBoard = 2
     }
 }

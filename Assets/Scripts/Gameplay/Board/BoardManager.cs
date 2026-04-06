@@ -4,20 +4,30 @@ using UnityEngine.Tilemaps;
 using Scripts.Utilities;
 using System.Collections.Generic;
 using Scripts.Contracts;
+using Scripts.Gameplay.Levels;
 
 namespace Scripts.Gameplay.Board
 {
+    /// <summary>
+    /// Manages a single board instance.
+    /// </summary>
     public class BoardManager : MonoBehaviour, IManager
     {
+        #region Actions
+
+        public static event Action<BoardData> OnBoardDataGenerationComplete;
+
+        #endregion
+
         #region Fields
         
         [SerializeField] private Grid grid;
 
         [SerializeField] private Tilemap tilemap;
 
-        [SerializeField] private SerializableDictionary<BoardArea, TileBase> dummyAreaTileBases;
+        [SerializeField] private SerializableDictionary<BoardAreaType, TileBase> dummyAreaTileBases;
 
-        [SerializeField] private SerializableDictionary<BoardArea, int> dummyAreaHeightInTiles;
+        [SerializeField] private SerializableDictionary<BoardAreaType, int> dummyAreaHeightInTiles;
 
         private BoardData _boardData;
         
@@ -29,24 +39,14 @@ namespace Scripts.Gameplay.Board
         
         private void Awake()
         {
-            Game.Instance.StartDummyLevel += GenerateDummyBoard;
+            LevelManager.GenerateBoard += GenerateBoard;
         }
 
         private void OnDestroy()
         {
-            Game.Instance.StartDummyLevel -= GenerateDummyBoard;
-        }
+            LevelManager.GenerateBoard -= GenerateBoard;
 
-        // TODO - Will be removed in level-setup PR
-        private void GenerateDummyBoard()
-        {
-            GenerateBoard(
-                new BoardData(
-                    Game.Instance.BoardSizeMaxInGameTiles, 
-                    dummyAreaTileBases, 
-                    dummyAreaHeightInTiles
-                )
-            );
+            OnBoardDataGenerationComplete = null;
         }
 
         /// <summary>
@@ -57,6 +57,25 @@ namespace Scripts.Gameplay.Board
         {
             _boardData = boardData;
 
+            // TODO - This will be rewritten in a board-generation PR
+            _boardData.FeedData(
+                areaHeightsInTiles: dummyAreaHeightInTiles,
+                areaTileBases: dummyAreaTileBases,
+                tileSizeInWorldUnits: grid.cellSize
+            );
+
+            _boardData.GenerateFields();
+
+            OnBoardDataGenerationComplete?.Invoke(_boardData);
+
+            SpawnBoard();
+        }
+
+        /// <summary>
+        /// Spawns the entire board, based on the <see cref="_boardData"/>.
+        /// </summary>
+        public void SpawnBoard()
+        {
             grid.transform.position = new Vector3(-_boardData.BoardSizeInTiles.x / 2, -_boardData.BoardSizeInTiles.y / 2, 0);
 
             SpawnFloorTiles();
@@ -66,18 +85,18 @@ namespace Scripts.Gameplay.Board
         /// Spawns floor tiles on the board, based on the <see cref="_boardData"/>.
         /// </summary>
         /// <remarks>
-        /// The tiles are spawned in order of their <see cref="BoardArea"/> enum value.
-        /// For each area, the tiles are spawned from y = 0 up to y = <see cref="_boardData.AreaHeightInTiles"/>[<see cref="BoardArea"/>].
+        /// The tiles are spawned in order of their <see cref="BoardAreaType"/> enum value.
+        /// For each area, the tiles are spawned from y = 0 up to y = <see cref="_boardData.AreaHeightInTiles"/>[<see cref="BoardAreaType"/>].
         /// </remarks>
         private void SpawnFloorTiles()
         {
             TileBase currentTile;
             int ySpawnStart = 0, ySpawnEnd;
 
-            for (BoardArea boardAreaToSpawn = (BoardArea) 1; (int) boardAreaToSpawn < Enum.GetNames(typeof(BoardArea)).Length; boardAreaToSpawn++)
+            for (BoardAreaType boardAreaToSpawn = BoardAreaType.BottomNoMansLand; boardAreaToSpawn < BoardAreaType.TopNoMansLand + 1; boardAreaToSpawn++)
             {
                 currentTile = _boardData.AreaTileBases[boardAreaToSpawn];
-                ySpawnEnd = ySpawnStart + _boardData.AreaHeightInTiles[boardAreaToSpawn];
+                ySpawnEnd = ySpawnStart + _boardData.AreaHeightsInTiles[boardAreaToSpawn];
 
                 for (int y = ySpawnStart; y < ySpawnEnd; y++)
                 {
@@ -99,31 +118,61 @@ namespace Scripts.Gameplay.Board
     /// </summary>
     public class BoardData
     {
+        #region Fields
+
+        private Vector2 _boardSizeInWorldUnits;
+
         /// <summary>
         /// The size of the board in tiles.
         /// </summary>
-        public Vector2 BoardSizeInTiles { get; }
+        public Vector2Int BoardSizeInTiles { get; private set; }
 
         /// <summary>
-        /// A dictionary of <see cref="BoardArea"/> to tile bases.
+        /// A dictionary of <see cref="BoardAreaType"/> to area heights in tiles.
         /// </summary>
-        public Dictionary<BoardArea, TileBase> AreaTileBases { get; }
+        public Dictionary<BoardAreaType, int> AreaHeightsInTiles { get; private set; }
 
         /// <summary>
-        /// A dictionary of <see cref="BoardArea"/> to area heights in tiles.
+        /// A dictionary of <see cref="BoardAreaType"/> to tile bases.
         /// </summary>
-        public Dictionary<BoardArea, int> AreaHeightInTiles { get; }
+        public Dictionary<BoardAreaType, TileBase> AreaTileBases { get; private set; }
 
-        public BoardData(Vector2 boardSizeInTiles, Dictionary<BoardArea, TileBase> areaTileBases, Dictionary<BoardArea, int> areaHeightInTiles)
+        /// <summary>
+        /// The size of a tile in world units.
+        /// </summary>
+        public Vector2 TileSizeInWorldUnits { get; private set; }
+
+        #endregion
+
+        #region Methods
+
+        public BoardData() {}
+
+        public void FeedData(LevelData levelData)
         {
-            BoardSizeInTiles = boardSizeInTiles;
-            AreaTileBases = areaTileBases;
-            AreaHeightInTiles = areaHeightInTiles;
+            _boardSizeInWorldUnits = levelData.BoardSizeInWorldUnits;
         }
+
+        public void FeedData(Dictionary<BoardAreaType, int> areaHeightsInTiles, Dictionary<BoardAreaType, TileBase> areaTileBases, Vector2 tileSizeInWorldUnits)
+        {
+            AreaHeightsInTiles = areaHeightsInTiles;
+            AreaTileBases = areaTileBases;
+            TileSizeInWorldUnits = tileSizeInWorldUnits;
+        }
+
+        public void GenerateFields()
+        {
+            BoardSizeInTiles = new Vector2Int(
+                Mathf.FloorToInt(_boardSizeInWorldUnits.x / TileSizeInWorldUnits.x),
+                Mathf.FloorToInt(_boardSizeInWorldUnits.y / TileSizeInWorldUnits.y)
+            );
+        }
+
+        #endregion
     }
 
     [Serializable]
-    public enum BoardArea
+    public enum BoardAreaType
     {
         None = 0,
         BottomNoMansLand = 1,

@@ -1,16 +1,11 @@
 namespace Scripts.Input.Handlers
 {
-    /// <summary>
-    /// Handles user input for playable entities.
-    /// </summary>
     public interface IInputHandler
     {
-        #region Methods
-
         /// <summary>
         /// Sets up handled events.
         /// </summary>
-        public void Init();
+        public void Init(IInputHandlerContext context);
 
         /// <summary>
         /// Removes all handled events.
@@ -31,7 +26,13 @@ namespace Scripts.Input.Handlers
         /// Disables handling of events.
         /// </summary>
         public void Disable();
+    }
 
-        #endregion
+    /// <summary>
+    /// Represents the context passed into a input handler.
+    /// </summary>
+    public interface IInputHandlerContext
+    {
+        
     }
 }

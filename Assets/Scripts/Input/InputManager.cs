@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Scripts.Contracts;
+using Scripts.Gameplay.Levels;
 using Scripts.Input.Handlers;
 using Scripts.Input.Handlers.Board;
 using Scripts.UI;
@@ -25,12 +26,12 @@ namespace Scripts.Input
         {
             inputHandlers = new List<IInputHandler>();
 
-            UIManager.SetUIScreenInput += InitHandler;
+            LevelManager.InitLevelInput += InitHandler;
         }
 
         private void OnDestroy()
         {
-            UIManager.SetUIScreenInput -= InitHandler;
+            LevelManager.InitLevelInput -= InitHandler;
         }
 
         private void Update()
@@ -43,20 +44,20 @@ namespace Scripts.Input
         /// Initialises a new input handler for the given screen state, if one does not already exist.
         /// </summary>
         /// <param name="screenState">The screen state to initialise an input handler for.</param>
-        public void InitHandler(UIScreenType screenState)
+        public void InitHandler(InputHandlerType handlerType, IInputHandlerContext context)
         {
-            if(TryGetHandler(screenState) != null)
+            if(TryGetHandler(handlerType) != null)
                 return;
 
-            IInputHandler newHandler = screenState switch
+            IInputHandler newHandler = handlerType switch
             {
-                UIScreenType.GameBoard => gameObject.AddComponent<BoardInputHandler>(),
+                InputHandlerType.Board => gameObject.AddComponent<BoardInputHandler>(),
                 _ => null
             };
             if (newHandler == null)
                 return;
 
-            newHandler.Init();
+            newHandler.Init(context);
             newHandler.Enable();
 
             inputHandlers.Add(newHandler);
@@ -66,18 +67,18 @@ namespace Scripts.Input
         /// Destroys the input handler associated with the given screen state.
         /// </summary>
         /// <param name="screenState">The screen state associated with the input handler to destroy.</param>
-        public void DestroyHandler(UIScreenType screenState)
+        public void DestroyHandler(InputHandlerType handlerType)
         {
-            IInputHandler handlerToDestroy = TryGetHandler(screenState);
+            IInputHandler handlerToDestroy = TryGetHandler(handlerType);
             if(handlerToDestroy == null)
                 return;
             
             handlerToDestroy.Disable();
             handlerToDestroy.Dispose();
 
-            Destroy(screenState switch
+            Destroy(handlerType switch
             {
-                UIScreenType.GameBoard => handlerToDestroy as BoardInputHandler,
+                InputHandlerType.Board => handlerToDestroy as BoardInputHandler,
                 _ => null
             });
 
@@ -89,11 +90,11 @@ namespace Scripts.Input
         /// </summary>
         /// <param name="screenState">The screen state to retrieve an input handler for.</param>
         /// <returns>An input handler associated with the given screen state, if one exists; otherwise, null.</returns>
-        private IInputHandler TryGetHandler(UIScreenType screenState)
+        private IInputHandler TryGetHandler(InputHandlerType handlerType)
         {
-            Type inputHandlerType = screenState switch
+            Type inputHandlerType = handlerType switch
             {
-                UIScreenType.GameBoard => typeof(BoardInputHandler),
+                InputHandlerType.Board => typeof(BoardInputHandler),
                 _ => null
             };
             if(inputHandlerType == null)
@@ -103,5 +104,13 @@ namespace Scripts.Input
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// The type of input handler to create.
+    /// </summary>
+    public enum InputHandlerType
+    {
+        Board = 0
     }
 }

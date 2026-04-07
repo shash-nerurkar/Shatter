@@ -17,7 +17,7 @@ namespace Scripts.UI.GameUI
 
         public void SetupLevelProgressBar(LevelProgressData levelProgressData)
         {
-            levelProgressBar.Setup(max: levelProgressData.MaxProgress);
+            levelProgressBar.Setup(max: levelProgressData.MaxProgress, current: 0);
         }
 
         public void SetupPlayerHealthBar(PlayerData playerData)

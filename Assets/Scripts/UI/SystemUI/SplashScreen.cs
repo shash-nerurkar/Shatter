@@ -26,6 +26,8 @@ namespace Scripts.UI
 
         private void OnDestroy()
         {
+            CancelInvoke();
+
             _onHidden = null;
         }
 

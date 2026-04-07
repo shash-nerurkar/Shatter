@@ -48,7 +48,7 @@ namespace Scripts.Gameplay.Cameras
             mainCamera.orthographic = true;
 
             float requiredHalfHeight = (cameraData.BoardSizeInWorldUnits.y + cameraData.BoardSafeAreaSizeInWorldUnits.y) / 2f;
-            float requiredHalfWidthAsHeight = (cameraData.BoardSizeInWorldUnits.x  + cameraData.BoardSafeAreaSizeInWorldUnits.y) / (2f * mainCamera.aspect);
+            float requiredHalfWidthAsHeight = (cameraData.BoardSizeInWorldUnits.x  + cameraData.BoardSafeAreaSizeInWorldUnits.x) / (2f * mainCamera.aspect);
             mainCamera.orthographicSize = Mathf.Max(requiredHalfHeight, requiredHalfWidthAsHeight);
 
             OnCameraSetupComplete?.Invoke(cameraData);

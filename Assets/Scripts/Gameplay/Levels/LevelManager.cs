@@ -44,8 +44,14 @@ namespace Scripts.Gameplay.Levels
 
         #region Fields
 
+        /// <summary>
+        /// The maximum permissible board size in tiles.
+        /// </summary>
         private readonly Vector2 BoardSizeMaxInGameTiles = new (10, 18);
 
+        /// <summary>
+        /// The maximum permissible board safe-area size in tiles.
+        /// </summary>
         private readonly Vector2 BoardMaxSafeAreaSizeInTiles = new (5, 5);
 
         private LevelData _currentLevelData;
@@ -113,8 +119,7 @@ namespace Scripts.Gameplay.Levels
             );
             boardManager.Init();
 
-            var newBoardData = new BoardData();
-            newBoardData.FeedData(_currentLevelData);
+            var newBoardData = new BoardData(_currentLevelData.BoardSizeInWorldUnits);
             GenerateBoard?.Invoke(newBoardData);
         }
 
@@ -190,12 +195,12 @@ namespace Scripts.Gameplay.Levels
     public class LevelData
     {
         /// <summary>
-        /// The size of the board in tiles.
+        /// The size of the board in world units.
         /// </summary>
         public Vector2 BoardSizeInWorldUnits { get; }
         
         /// <summary>
-        /// The size of the board's safe area in tiles.
+        /// The size of the board's safe area in world units.
         /// </summary>
         public Vector2 BoardSafeAreaSizeInWorldUnits { get; }
 

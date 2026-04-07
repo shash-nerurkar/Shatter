@@ -161,11 +161,9 @@ namespace Scripts.Gameplay.Board
 
         #region Methods
 
-        public BoardData() {}
-
-        public void FeedData(LevelData levelData)
+        public BoardData(Vector2 boardSizeInWorldUnits)
         {
-            _boardSizeInWorldUnits = levelData.BoardSizeInWorldUnits;
+            _boardSizeInWorldUnits = boardSizeInWorldUnits;
         }
 
         public void FeedData(Dictionary<BoardAreaType, int> areaHeightsInTiles, Dictionary<BoardAreaType, TileBase> areaTileBases, Vector2 tileSizeInWorldUnits)
@@ -177,6 +175,9 @@ namespace Scripts.Gameplay.Board
 
         public void GenerateFields()
         {
+            if (TileSizeInWorldUnits.x <= 0 || TileSizeInWorldUnits.y <= 0)
+                throw new InvalidOperationException($"Invalid TileSizeInWorldUnits: {TileSizeInWorldUnits}");
+
             BoardSizeInTiles = new Vector2Int(
                 Mathf.FloorToInt(_boardSizeInWorldUnits.x / TileSizeInWorldUnits.x),
                 Mathf.FloorToInt(_boardSizeInWorldUnits.y / TileSizeInWorldUnits.y)

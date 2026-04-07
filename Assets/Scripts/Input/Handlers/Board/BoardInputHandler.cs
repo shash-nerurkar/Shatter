@@ -39,7 +39,7 @@ namespace Scripts.Input.Handlers.Board
         public void Init(IInputHandlerContext context)
         {
             if (context is not BoardInputHandlerContext boardContext)
-                return;
+                throw new ArgumentException($"Expected {nameof(BoardInputHandlerContext)}, got {context?.GetType().Name ?? "null"}", nameof(context));
 
             _handlerContext = boardContext;
         }
@@ -67,17 +67,17 @@ namespace Scripts.Input.Handlers.Board
                         {
                             case BoardClickableAreaType.PlayerMove:
                                 _moveTouchId = touch.touchId;
+                                PublishCommand(touch);
                                 break;
 
                             case BoardClickableAreaType.PlayerAim:
                                 _aimTouchId = touch.touchId;
+                                PublishCommand(touch);
                                 break;
                             
                             default:
-                                return;
+                                break;
                         }
-                        
-                        PublishCommand(touch);
 
                         break;
 
@@ -104,18 +104,9 @@ namespace Scripts.Input.Handlers.Board
         private void PublishCommand(ETouch touch)
         {
             if (touch.touchId == _moveTouchId)
-            {
                 GameCommandBus.Publish(new MoveCommandContext(touch.screenPosition));
-
-                Debug.Log($"Move: {touch.screenPosition}");
-            }
             else if (touch.touchId == _aimTouchId)
-            {
                 GameCommandBus.Publish(new AimCommandContext(touch.screenPosition, isScreenSpace: true));
-
-                Debug.Log($"Aim: {touch.screenPosition}");
-            }
-                
         }
 
         #endregion
@@ -162,10 +153,7 @@ namespace Scripts.Input.Handlers.Board
                     boardAreaTopWorldPositionOffset - cameraOffset
                 );
 
-                if(_boardClickableAreasTopRightWorldPositions.ContainsKey(kvp.Key))
-                    _boardClickableAreasTopRightWorldPositions[kvp.Key] = kvp.Value;
-                else
-                    _boardClickableAreasTopRightWorldPositions.Add(kvp.Key, kvp.Value);
+                _boardClickableAreasTopRightWorldPositions[kvp.Key] = kvp.Value;
 
                 prevBoardAreaTopWorldPositionY = boardAreaTopWorldPositionOffset.y;
             }

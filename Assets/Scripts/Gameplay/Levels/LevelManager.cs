@@ -31,6 +31,14 @@ namespace Scripts.Gameplay.Levels
         public static event Action<PlayerData> OnPlayerDataUpdated;
 
         public static event Action<LevelProgressData> OnLevelProgressUpdated;
+        
+        public static event Action DestroyBoard;
+
+        public static event Action DestroyLevelInput;
+
+        public static event Action DestroyLevelUI;
+
+        public static event Action DestroyPlayer;
 
         #endregion
 
@@ -80,6 +88,11 @@ namespace Scripts.Gameplay.Levels
             StartEnemySpawning = null;
             OnPlayerDataUpdated = null;
             OnLevelProgressUpdated = null;
+
+            DestroyBoard = null;
+            DestroyLevelInput = null;
+            DestroyLevelUI = null;
+            DestroyPlayer = null;
         }
 
         #region Start Level
@@ -148,11 +161,23 @@ namespace Scripts.Gameplay.Levels
 
         #endregion
 
-        #region Progress Level
-
-        #endregion
-
         #region End Level
+
+        private void OnAllEnemiesSpawnedAndDestroyed()
+        {
+            EndLevel();
+        }
+
+        private void EndLevel()
+        {
+            DestroyBoard?.Invoke();
+            
+            DestroyLevelInput?.Invoke();
+            
+            DestroyLevelUI?.Invoke();
+            
+            DestroyPlayer?.Invoke();
+        }
 
         #endregion
 

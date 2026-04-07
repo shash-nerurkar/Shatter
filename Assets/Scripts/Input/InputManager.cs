@@ -27,11 +27,13 @@ namespace Scripts.Input
             inputHandlers = new List<IInputHandler>();
 
             LevelManager.InitLevelInput += InitHandler;
+            LevelManager.DestroyLevelInput += DestroyHandler;
         }
 
         private void OnDestroy()
         {
             LevelManager.InitLevelInput -= InitHandler;
+            LevelManager.DestroyLevelInput -= DestroyHandler;
         }
 
         private void Update()

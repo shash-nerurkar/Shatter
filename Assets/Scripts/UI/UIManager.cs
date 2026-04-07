@@ -45,6 +45,7 @@ namespace Scripts.UI
             LevelManager.InitLevelUI += InitLevelUI;
             LevelManager.OnPlayerDataUpdated += gameUIHandler.SetupPlayerHealthBar;
             LevelManager.OnLevelProgressUpdated += gameUIHandler.SetupLevelProgressBar;
+            LevelManager.DestroyLevelUI += DestroyLevelUI;
         }
 
         private void OnDestroy()
@@ -56,12 +57,19 @@ namespace Scripts.UI
             LevelManager.InitLevelUI -= InitLevelUI;
             LevelManager.OnPlayerDataUpdated -= gameUIHandler.SetupPlayerHealthBar;
             LevelManager.OnLevelProgressUpdated -= gameUIHandler.SetupLevelProgressBar;
+            LevelManager.DestroyLevelUI -= DestroyLevelUI;
         }
 
         private void InitLevelUI()
         {
             gameUIHandler.OnLevelStart();
             worldUIHandler.OnLevelStart();
+        }
+
+        private void DestroyLevelUI()
+        {
+            gameUIHandler.OnLevelEnd();
+            worldUIHandler.OnLevelEnd();
         }
 
         #endregion

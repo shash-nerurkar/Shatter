@@ -46,6 +46,12 @@ namespace Scripts.UI.WorldUI
             }
         }
 
+        public void OnLevelEnd()
+        {
+            if(_enemyHealthBarSpawner != null)
+                _enemyHealthBarSpawner.Destroy();
+        }
+
         #endregion
     }
 }

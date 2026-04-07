@@ -29,6 +29,12 @@ namespace Scripts.UI.GameUI
 
         public void SetupLevelProgressBar(LevelProgressData levelProgressData) => _boardHUD.SetupLevelProgressBar(levelProgressData);
 
+        public void OnLevelEnd()
+        {
+            if(_boardHUD != null)
+                Destroy(_boardHUD.gameObject);
+        }
+
         #endregion
     }
 }

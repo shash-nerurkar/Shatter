@@ -34,7 +34,7 @@ namespace Scripts.Gameplay.Levels
         
         public static event Action DestroyBoard;
 
-        public static event Action DestroyLevelInput;
+        public static event Action<InputHandlerType> DestroyLevelInput;
 
         public static event Action DestroyLevelUI;
 
@@ -172,7 +172,7 @@ namespace Scripts.Gameplay.Levels
         {
             DestroyBoard?.Invoke();
             
-            DestroyLevelInput?.Invoke();
+            DestroyLevelInput?.Invoke(InputHandlerType.Board);
             
             DestroyLevelUI?.Invoke();
             

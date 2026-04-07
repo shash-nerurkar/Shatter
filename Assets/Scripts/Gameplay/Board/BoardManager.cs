@@ -40,14 +40,18 @@ namespace Scripts.Gameplay.Board
         private void Awake()
         {
             LevelManager.GenerateBoard += GenerateBoard;
+            LevelManager.DestroyBoard += DestroyBoard;
         }
 
         private void OnDestroy()
         {
             LevelManager.GenerateBoard -= GenerateBoard;
+            LevelManager.DestroyBoard -= DestroyBoard;
 
             OnBoardDataGenerationComplete = null;
         }
+
+        #region Generate Board
 
         /// <summary>
         /// Generates the board based on the given <see cref="BoardData"/>.
@@ -109,6 +113,17 @@ namespace Scripts.Gameplay.Board
                 ySpawnStart = ySpawnEnd;
             }
         }
+
+        #endregion
+
+        #region Destroy Board
+
+        private void DestroyBoard()
+        {
+            Destroy(gameObject);
+        }
+
+        #endregion
 
         #endregion
     }

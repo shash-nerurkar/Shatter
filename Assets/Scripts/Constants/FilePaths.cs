@@ -7,6 +7,7 @@ namespace Scripts.Constants
         public const string EnemyHealthBarSpawnerPrefab = "Prefabs/UI/World/Enemy/Health/EnemyHealthBarSpawner";
         public const string InputManagerPrefab = "Prefabs/Input/InputManager";
         public const string CameraManagerPrefab = "Prefabs/Camera/CameraManager";
+        public const string LevelManagerPrefab = "Prefabs/Levels/LevelManager";
         public const string BoardManagerPrefab = "Prefabs/Board/BoardManager";
     }
 }

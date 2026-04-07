@@ -24,6 +24,13 @@ namespace Scripts.UI
 
         #region Methods
 
+        private void OnDestroy()
+        {
+            CancelInvoke();
+
+            _onHidden = null;
+        }
+
         /// <summary>
         /// Shows the splash screen, and hides it after the specified duration.
         /// </summary>

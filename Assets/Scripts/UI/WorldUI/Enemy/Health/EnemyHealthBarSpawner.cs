@@ -42,6 +42,11 @@ namespace Scripts.UI.WorldUI.Enemy.Health
             }
         }
 
+        public void Destroy()
+        {
+            Destroy(gameObject);
+        }
+
         #endregion
     }
 }

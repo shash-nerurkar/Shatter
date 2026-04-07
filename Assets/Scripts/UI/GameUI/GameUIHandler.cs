@@ -1,4 +1,6 @@
 using Scripts.Constants;
+using Scripts.Entity.Playables;
+using Scripts.Gameplay.Levels;
 using Scripts.Utilities;
 using UnityEngine;
 
@@ -16,22 +18,21 @@ namespace Scripts.UI.GameUI
 
         public void OnLevelStart()
         {
-            CreateNewBoardHud();
-        }
-
-        /// <summary>
-        /// Instantiates a new <see cref="BoardHUD"/> and initializes it.
-        /// </summary>
-        private void CreateNewBoardHud()
-        {
             _boardHUD = MiscUtils.InstantiatePrefab<BoardHUD>(
                 path: FilePaths.BoardHudPrefab, 
                 parent: transform, 
                 name: "Board HUD"
             );
+        }
 
+        public void SetupPlayerHealthBar(PlayerData playerData) => _boardHUD.SetupPlayerHealthBar(playerData);
+
+        public void SetupLevelProgressBar(LevelProgressData levelProgressData) => _boardHUD.SetupLevelProgressBar(levelProgressData);
+
+        public void OnLevelEnd()
+        {
             if(_boardHUD != null)
-                _boardHUD.Initialize();
+                Destroy(_boardHUD.gameObject);
         }
 
         #endregion

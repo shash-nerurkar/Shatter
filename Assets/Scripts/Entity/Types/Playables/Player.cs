@@ -26,7 +26,6 @@ namespace Scripts.Entity.Playables
 
         #endregion
 
-
         #region Methods
 
         private void Awake()
@@ -79,5 +78,27 @@ namespace Scripts.Entity.Playables
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Data representing the current stats of the player.
+    /// </summary>
+    public class PlayerData
+    {
+        /// <summary>
+        /// The maximum health of the player.
+        /// </summary>
+        public float MaxHealth { get; private set; }
+
+        /// <summary>
+        /// The current health of the player.
+        /// </summary>
+        public float CurrentHealth { get; private set; }
+
+        public PlayerData(float maxHealth, float currentHealth)
+        {
+            MaxHealth = maxHealth;
+            CurrentHealth = currentHealth;
+        }
     }
 }

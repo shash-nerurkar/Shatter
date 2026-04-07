@@ -1,5 +1,6 @@
 using System;
 using Scripts.Contracts;
+using Scripts.Gameplay.Levels;
 using UnityEngine;
 
 namespace Scripts.Gameplay.Cameras
@@ -9,6 +10,8 @@ namespace Scripts.Gameplay.Cameras
         #region Actions
 
         public static event Action<Camera> UpdateMainCamera;
+
+        public static event Action<CameraData> OnCameraSetupComplete;
 
         #endregion
 
@@ -24,14 +27,15 @@ namespace Scripts.Gameplay.Cameras
         
         private void Awake()
         {
-            Game.Instance.StartDummyLevel += OnDummyLevelStart;
+            LevelManager.SetupCamera += SetupLevelCamera;
         }
 
         private void OnDestroy()
         {
+            LevelManager.SetupCamera -= SetupLevelCamera;
+            
             UpdateMainCamera = null;
-
-            Game.Instance.StartDummyLevel -= OnDummyLevelStart;
+            OnCameraSetupComplete = null;
         }
 
         private void Start()
@@ -39,24 +43,15 @@ namespace Scripts.Gameplay.Cameras
             UpdateMainCamera?.Invoke(mainCamera);
         }
 
-        // TODO - Will be removed in level-setup PR
-        private void OnDummyLevelStart()
-        {
-            OnLevelStart(
-                new CameraData(
-                    Game.Instance.BoardSizeMaxInGameTiles, 
-                    Game.Instance.BoardSafeAreaSizeInTiles
-                )
-            );
-        }
-
-        private void OnLevelStart(CameraData cameraData)
+        private void SetupLevelCamera(CameraData cameraData)
         {
             mainCamera.orthographic = true;
 
-            float requiredHalfHeight = (cameraData.BoardSizeInTiles.y + cameraData.BoardSafeAreaSizeInTiles.y) / 2f;
-            float requiredHalfWidthAsHeight = (cameraData.BoardSizeInTiles.x  + cameraData.BoardSafeAreaSizeInTiles.y) / (2f * mainCamera.aspect);
+            float requiredHalfHeight = (cameraData.BoardSizeInWorldUnits.y + cameraData.BoardSafeAreaSizeInWorldUnits.y) / 2f;
+            float requiredHalfWidthAsHeight = (cameraData.BoardSizeInWorldUnits.x  + cameraData.BoardSafeAreaSizeInWorldUnits.x) / (2f * mainCamera.aspect);
             mainCamera.orthographicSize = Mathf.Max(requiredHalfHeight, requiredHalfWidthAsHeight);
+
+            OnCameraSetupComplete?.Invoke(cameraData);
         }
 
         #endregion
@@ -70,17 +65,19 @@ namespace Scripts.Gameplay.Cameras
         /// <summary>
         /// The size of the board in tiles.
         /// </summary>
-        public Vector2 BoardSizeInTiles { get; }
+        public Vector2 BoardSizeInWorldUnits { get; private set; }
 
         /// <summary>
         /// The size of the board's safe area in tiles.
         /// </summary>
-        public Vector2 BoardSafeAreaSizeInTiles { get; }
+        public Vector2 BoardSafeAreaSizeInWorldUnits { get; private set; }
 
-        public CameraData(Vector2 boardSizeInTiles, Vector2 boardSafeAreaSizeInTiles)
+        public CameraData() {}
+
+        public void FeedData(LevelData levelData)
         {
-            BoardSizeInTiles = boardSizeInTiles;
-            BoardSafeAreaSizeInTiles = boardSafeAreaSizeInTiles;
+            BoardSizeInWorldUnits = levelData.BoardSizeInWorldUnits;
+            BoardSafeAreaSizeInWorldUnits = levelData.BoardSafeAreaSizeInWorldUnits;
         }
     }
 }
